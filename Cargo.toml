@@ -5,3 +5,4 @@ authors = ["Michał Budzyński <michal@virtualdesign.pl>"]
 edition = "2018"
 
 [dependencies]
+vec3D = "0.3.0"
