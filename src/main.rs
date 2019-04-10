@@ -5,18 +5,24 @@ mod ray;
 use vec3D::Vec3D;
 use ray::Ray;
 
-fn hit_sphere(center: Vec3D, radius: f64, ray: &Ray) -> bool {
+fn hit_sphere(center: Vec3D, radius: f64, ray: &Ray) -> f64 {
     let oc = ray.origin - center;
     let a = ray.direction.dot(ray.direction);
     let b = oc.dot(ray.direction) * 2.0;
     let c = oc.dot(oc) - radius * radius;
     let discriminant = b * b - 4.0 * a * c;
-    discriminant > 0.0
+    if discriminant < 0.0 {
+        return -1.0;
+    } else {
+        return (-b - discriminant.sqrt()) / (2.0 * a);
+    }
 }
 
 fn color(ray: Ray) -> Vec3D {
-    if hit_sphere(Vec3D::new(0.0, 0.0, -1.0), 0.5, &ray) {
-        return Vec3D::new(1.0, 0.0, 0.0);
+    let t = hit_sphere(Vec3D::new(0.0, 0.0, -1.0), 0.5, &ray);
+    if t > 0.0 {
+        let normal = (ray.point_at_parameter(t) - Vec3D::new(0.0, 0.0, -1.0)).unit();
+        return Vec3D::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0) * 0.5;
     }
 
     let unit_direction = ray.direction.unit();
