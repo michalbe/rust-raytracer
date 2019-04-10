@@ -13,7 +13,7 @@ impl Ray {
         }
     }
 
-    pub fn point_at_parameter(self, t: f64) -> Vec3D {
+    pub fn point_at_parameter(&self, t: f64) -> Vec3D {
         self.origin + self.direction * t
     }
 }
