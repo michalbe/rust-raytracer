@@ -5,11 +5,25 @@ mod ray;
 use vec3D::Vec3D;
 use ray::Ray;
 
+fn hit_sphere(center: Vec3D, radius: f64, ray: &Ray) -> bool {
+    let oc = ray.origin - center;
+    let a = ray.direction.dot(ray.direction);
+    let b = oc.dot(ray.direction) * 2.0;
+    let c = oc.dot(oc) - radius * radius;
+    let discriminant = b * b - 4.0 * a * c;
+    discriminant > 0.0
+}
+
 fn color(ray: Ray) -> Vec3D {
+    if hit_sphere(Vec3D::new(0.0, 0.0, -1.0), 0.5, &ray) {
+        return Vec3D::new(1.0, 0.0, 0.0);
+    }
+
     let unit_direction = ray.direction.unit();
     let t = 0.5 * (unit_direction.y + 1.0);
     (Vec3D::new(1.0, 1.0, 1.0) * (1.0 - t)) + (Vec3D::new(0.5, 0.7, 1.0) * t)
 }
+
 
 fn main() {
     let nx = 200;
