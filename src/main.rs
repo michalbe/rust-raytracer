@@ -1,13 +1,16 @@
 extern crate vec3D;
+extern crate rand;
 
 mod ray;
 mod hitable;
 mod sphere;
+mod camera;
 
 use vec3D::Vec3D;
 use ray::Ray;
 use hitable::{HitRecord, Hitable, HitableList};
 use sphere::Sphere;
+use camera::Camera;
 
 fn color(ray: Ray, world: &Hitable) -> Vec3D {
     let mut rec = HitRecord::new();
@@ -24,13 +27,11 @@ fn color(ray: Ray, world: &Hitable) -> Vec3D {
 fn main() {
     let nx = 400;
     let ny = 200;
+    let ns = 100;
+
+    // let mut rng = rand::thread_rng();
 
     println!("P3\n{} {} 255", nx, ny);
-
-    let lower_left_corner = Vec3D::new(-2.0, -1.0, -1.0);
-    let horizontal = Vec3D::new(4.0, 0.0, 0.0);
-    let vertical = Vec3D::new(0.0, 2.0, 0.0);
-    let origin = Vec3D::new(0.0, 0.0, 0.0);
 
     let mut world = HitableList {
         list: vec![]
@@ -46,13 +47,22 @@ fn main() {
         radius: 100.0,
     }));
 
+    let camera = Camera::new();
+
     for j in (0..ny).rev() {
         for i in 0..nx {
-            let u = i as f64 / nx as f64;
-            let v = j as f64 / ny as f64;
-            let r = Ray::new(origin, lower_left_corner + (horizontal * u) + (vertical * v));
+            let mut col = Vec3D::new(0.0, 0.0, 0.0);
 
-            let col = color(r, &world);
+            for _ in 0..ns {
+                let u = (i as f64 + rand::random::<f64>()) / nx as f64;
+                let v = (j as f64 + rand::random::<f64>()) / ny as f64;
+                let ray = camera.get_ray(u, v);
+                col += color(ray, &world);
+            }
+
+
+            col /= ns as f64;
+
             // println!("{}, t", col);
             let r = (255.00 * col.x).round();
             let g = (255.00 * col.y).round();
