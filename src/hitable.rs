@@ -1,10 +1,14 @@
-use crate::ray::Ray;
+use crate::{
+    ray::Ray,
+    material::{ Material, Lambert },
+};
 use vec3D::Vec3D;
 
 pub struct HitRecord {
     pub t: f64,
     pub p: Vec3D,
     pub normal: Vec3D,
+    pub material: Material,
 }
 
 impl HitRecord {
@@ -13,8 +17,13 @@ impl HitRecord {
             t: 0.0,
             p: Vec3D::new(0.0, 0.0, 0.0),
             normal: Vec3D::new(0.0, 0.0, 0.0),
+            material: Material::Lambert(Lambert::new(Vec3D::new(0.0, 0.0, 0.0)))
         }
     }
+
+    // pub fn material(&self) -> Material {
+    //     self.material
+    // }
 }
 
 pub trait Hitable {
@@ -38,6 +47,7 @@ impl Hitable for HitableList {
                 rec.p = temp_rec.p;
                 rec.t = temp_rec.t;
                 rec.normal = temp_rec.normal;
+                rec.material = temp_rec.material;
             }
         }
 
