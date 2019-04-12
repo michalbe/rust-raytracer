@@ -56,19 +56,21 @@ impl Scatter for Lambert {
 #[derive(Clone, Copy)]
 pub struct Metal {
     albedo: Vec3D,
+    fuzz: f64
 }
 
 impl Metal {
-    pub fn new(albedo: Vec3D) -> Metal {
+    pub fn new(albedo: Vec3D, fuzz: f64) -> Metal {
         Metal {
-            albedo
+            albedo,
+            fuzz: fuzz.min(1.0)
         }
     }
 }
 impl Scatter for Metal {
     fn scatter(&self, ray_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3D, scattered: &mut Ray) -> bool {
         let reflected = reflect(ray_in.direction.unit(), rec.normal);
-        let new_scattered = Ray::new(rec.p, reflected);
+        let new_scattered = Ray::new(rec.p, reflected + random_in_unit_sphere() * self.fuzz);
         scattered.direction = new_scattered.direction;
         scattered.origin = new_scattered.origin;
         attenuation.x = self.albedo.x;
