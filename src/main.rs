@@ -12,7 +12,7 @@ use vec3D::Vec3D;
 use hitable::HitableList;
 use sphere::Sphere;
 use camera::Camera;
-use material::{ Material, Lambert, Metal };
+use material::{ Material, Lambert, Metal, Dielectric };
 use utils::color;
 
 fn main() {
@@ -47,7 +47,7 @@ fn main() {
     world.list.push(Box::new(Sphere::new(
         Vec3D::new(-1.0, 0.0, -1.0),
         0.5,
-        Material::Metal(Metal::new(Vec3D::new(0.8, 0.8, 0.8), 1.0))
+        Material::Dielectric(Dielectric::new(1.5))
     )));
 
     let camera = Camera::new();

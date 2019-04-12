@@ -46,3 +46,25 @@ pub fn color(ray: Ray, world: &Hitable, depth: i32) -> Vec3D {
 pub fn reflect(v: Vec3D, n: Vec3D) -> Vec3D {
     v - n * v.dot(n) * 2.0
 }
+
+pub fn refract(v: Vec3D, n: Vec3D, ni_over_nt: f64, refracted: &mut Vec3D) -> bool {
+    let uv = v.unit();
+    let dt = uv.dot(n);
+    let discriminant = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
+
+    if discriminant > 0.0 {
+        let new_refracted = (uv - n * dt) * ni_over_nt - n * (discriminant.sqrt());
+        refracted.x = new_refracted.x;
+        refracted.y = new_refracted.y;
+        refracted.z = new_refracted.z;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+pub fn schlick(cosine: f64, ref_idx: f64) -> f64 {
+    let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+    r0 = r0 * r0;
+    r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
+}
