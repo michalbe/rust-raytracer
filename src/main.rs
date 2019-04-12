@@ -1,41 +1,19 @@
 extern crate vec3D;
 extern crate rand;
 
+mod utils;
 mod ray;
 mod hitable;
 mod sphere;
 mod camera;
+mod material;
 
 use vec3D::Vec3D;
-use ray::Ray;
-use hitable::{HitRecord, Hitable, HitableList};
+use hitable::HitableList;
 use sphere::Sphere;
 use camera::Camera;
-
-fn color(ray: Ray, world: &Hitable) -> Vec3D {
-    let mut rec = HitRecord::new();
-    if world.hit(&ray, 0.001, std::f64::MAX, &mut rec) {
-        let target = rec.p + rec.normal + random_in_unit_sphere();
-        return color(Ray::new(rec.p, target - rec.p), world) * 0.5;
-    } else {
-        let unit_direction = ray.direction.unit();
-        let t = 0.5 * (unit_direction.y + 1.0);
-        return (Vec3D::new(1.0, 1.0, 1.0) * (1.0 - t)) + (Vec3D::new(0.5, 0.7, 1.0) * t);
-    }
-}
-
-fn random_in_unit_sphere() -> Vec3D {
-    let mut p: Vec3D;
-
-    loop {
-        p = Vec3D::new(rand::random::<f64>(), rand::random::<f64>(), rand::random::<f64>()) * 2.0 - Vec3D::new(1.0, 1.0, 1.0);
-
-        if p.mag2() < 1.0 {
-            break;
-        }
-    }
-    p
-}
+use material::{ Material, Lambert, Metal };
+use utils::color;
 
 fn main() {
     let nx = 400;
@@ -48,15 +26,29 @@ fn main() {
         list: vec![]
     };
 
-    world.list.push(Box::new(Sphere {
-        center: Vec3D::new(0.0, 0.0, -1.0),
-        radius: 0.5,
-    }));
+    world.list.push(Box::new(Sphere::new(
+        Vec3D::new(0.0, 0.0, -1.0),
+        0.5,
+        Material::Lambert(Lambert::new(Vec3D::new(0.8, 0.3, 0.3)))
+    )));
 
-    world.list.push(Box::new(Sphere {
-        center: Vec3D::new(0.0, -100.5, -1.0),
-        radius: 100.0,
-    }));
+    world.list.push(Box::new(Sphere::new(
+        Vec3D::new(0.0, -100.5, -1.0),
+        100.0,
+        Material::Lambert(Lambert::new(Vec3D::new(0.8, 0.8, 0.0)))
+    )));
+
+    world.list.push(Box::new(Sphere::new(
+        Vec3D::new(1.0, 0.0, -1.0),
+        0.5,
+        Material::Metal(Metal::new(Vec3D::new(0.8, 0.6, 0.2)))
+    )));
+
+    world.list.push(Box::new(Sphere::new(
+        Vec3D::new(-1.0, 0.0, -1.0),
+        0.5,
+        Material::Metal(Metal::new(Vec3D::new(0.8, 0.8, 0.8)))
+    )));
 
     let camera = Camera::new();
 
@@ -68,7 +60,7 @@ fn main() {
                 let u = (i as f64 + rand::random::<f64>()) / nx as f64;
                 let v = (j as f64 + rand::random::<f64>()) / ny as f64;
                 let ray = camera.get_ray(u, v);
-                col += color(ray, &world);
+                col += color(ray, &world, 0);
             }
 
             col /= ns as f64;
