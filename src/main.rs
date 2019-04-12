@@ -79,9 +79,9 @@ fn main() {
             col /= ns as f64;
 
             // println!("{}, t", col);
-            let r = (255.00 * col.x).round();
-            let g = (255.00 * col.y).round();
-            let b = (255.00 * col.z).round();
+            let r = (255.00 * col.x.sqrt()).round();
+            let g = (255.00 * col.y.sqrt()).round();
+            let b = (255.00 * col.z.sqrt()).round();
             println!("{} {} {}", r, g, b);
         }
     }
