@@ -15,7 +15,8 @@ use camera::Camera;
 fn color(ray: Ray, world: &Hitable) -> Vec3D {
     let mut rec = HitRecord::new();
     if world.hit(&ray, 0.0, std::f64::MAX, &mut rec) {
-        return Vec3D::new(rec.normal.x + 1.0, rec.normal.y + 1.0, rec.normal.z + 1.0) * 0.5;
+        let target = rec.p + rec.normal + random_in_unit_sphere();
+        return color(Ray::new(rec.p, target - rec.p), world) * 0.5;
     } else {
         let unit_direction = ray.direction.unit();
         let t = 0.5 * (unit_direction.y + 1.0);
@@ -23,6 +24,20 @@ fn color(ray: Ray, world: &Hitable) -> Vec3D {
     }
 }
 
+fn random_in_unit_sphere() -> Vec3D {
+    let mut p: Vec3D;
+
+    loop {
+        p = Vec3D::new(rand::random::<f64>(), rand::random::<f64>(), rand::random::<f64>()) * 2.0 - Vec3D::new(1.0, 1.0, 1.0);
+
+        // println!("{}", p.mag2());
+        if p.mag2() < 1.0 {
+            // println!("BREAK");
+            break;
+        }
+    }
+    p
+}
 
 fn main() {
     let nx = 400;
