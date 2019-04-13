@@ -1,6 +1,6 @@
 Rust Raytracer
 --
-by [@michalbe](http://github.com/michalbe), based on a (https://github.com/petershirley/raytracinginoneweekend) book by Peter Shirley.
+by [@michalbe](http://github.com/michalbe), based on a [Raytracing in one weekend](https://github.com/petershirley/raytracinginoneweekend) book by Peter Shirley.
 
 ## Run
 ```
