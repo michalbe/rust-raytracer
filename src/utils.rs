@@ -53,10 +53,7 @@ pub fn refract(v: Vec3D, n: Vec3D, ni_over_nt: f64, refracted: &mut Vec3D) -> bo
     let discriminant = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
 
     if discriminant > 0.0 {
-        let new_refracted = (uv - n * dt) * ni_over_nt - n * (discriminant.sqrt());
-        refracted.x = new_refracted.x;
-        refracted.y = new_refracted.y;
-        refracted.z = new_refracted.z;
+        *refracted = (uv - n * dt) * ni_over_nt - n * (discriminant.sqrt());
         return true;
     } else {
         return false;

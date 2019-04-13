@@ -47,12 +47,8 @@ impl Lambert {
 impl Scatter for Lambert {
     fn scatter(&self, _ray_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3D, scattered: &mut Ray) -> bool {
         let target = rec.p + rec.normal + random_in_unit_sphere();
-        let new_scattered = Ray::new(rec.p, target - rec.p);
-        scattered.direction = new_scattered.direction;
-        scattered.origin = new_scattered.origin;
-        attenuation.x = self.albedo.x;
-        attenuation.y = self.albedo.y;
-        attenuation.z = self.albedo.z;
+        *scattered = Ray::new(rec.p, target - rec.p);
+        *attenuation = self.albedo;
         true
     }
 }
@@ -75,12 +71,8 @@ impl Metal {
 impl Scatter for Metal {
     fn scatter(&self, ray_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3D, scattered: &mut Ray) -> bool {
         let reflected = reflect(ray_in.direction.unit(), rec.normal);
-        let new_scattered = Ray::new(rec.p, reflected + random_in_unit_sphere() * self.fuzz);
-        scattered.direction = new_scattered.direction;
-        scattered.origin = new_scattered.origin;
-        attenuation.x = self.albedo.x;
-        attenuation.y = self.albedo.y;
-        attenuation.z = self.albedo.z;
+        *scattered = Ray::new(rec.p, reflected + random_in_unit_sphere() * self.fuzz);
+        *attenuation = self.albedo;
         scattered.direction.dot(rec.normal) > 0.0
     }
 }
@@ -102,23 +94,21 @@ impl Scatter for Dielectric {
     fn scatter(&self, ray_in: &Ray, rec: &HitRecord, attenuation: &mut Vec3D, scattered: &mut Ray) -> bool {
         let outward_normal: Vec3D;
         let ni_over_nt: f64;
-        let mut refracted = Vec3D::new(0.0, 0.0, 0.0);
+        let mut refracted = Vec3D::new(1.0, 1.0, 1.0);
         let reflect_prob: f64;
         let cosine: f64;
 
-        let reflected = reflect(ray_in.direction.unit(), rec.normal);
-        attenuation.x = 1.0;
-        attenuation.y = 1.0;
-        attenuation.z = 1.0;
+        let reflected = reflect(ray_in.direction, rec.normal);
+        *attenuation = Vec3D::new(1.0, 1.0, 1.0);
 
         if ray_in.direction.dot(rec.normal) > 0.0 {
             outward_normal = rec.normal * -1.0;
             ni_over_nt = self.ref_idx;
             cosine = self.ref_idx * ray_in.direction.dot(rec.normal) / ray_in.direction.mag();
         } else {
-            outward_normal = rec.normal;
+            outward_normal = rec.normal * 1.0;
             ni_over_nt = 1.0 / self.ref_idx;
-            cosine = ray_in.direction.dot(rec.normal) * -1.0 / ray_in.direction.mag();
+            cosine = (ray_in.direction.dot(rec.normal) * -1.0) / ray_in.direction.mag();
         }
 
         if refract(ray_in.direction, outward_normal, ni_over_nt, &mut refracted) {
@@ -128,13 +118,9 @@ impl Scatter for Dielectric {
         }
 
         if rand::random::<f64>() < reflect_prob {
-            // let new_scattered = Ray::new(rec.p, reflected);
-            scattered.direction = reflected;
-            scattered.origin = rec.p;
+            *scattered = Ray::new(rec.p, reflected);
         } else {
-            // let new_scattered = Ray::new(rec.p, refracted);
-            scattered.direction = refracted;
-            scattered.origin = rec.p;
+            *scattered = Ray::new(rec.p, refracted);
         }
 
         true
