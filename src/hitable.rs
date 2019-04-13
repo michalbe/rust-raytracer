@@ -1,6 +1,7 @@
 use crate::{
     ray::Ray,
     material::{ Material, Lambert },
+    sphere::Sphere,
 };
 use vec3D::Vec3D;
 
@@ -27,7 +28,7 @@ pub trait Hitable {
 }
 
 pub struct HitableList {
-    pub list: Vec<Box<Hitable>>
+    pub list: Vec<Sphere>
 }
 
 impl Hitable for HitableList {
