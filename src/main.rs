@@ -29,7 +29,7 @@ fn main() {
     world.list.push(Box::new(Sphere::new(
         Vec3D::new(0.0, 0.0, -1.0),
         0.5,
-        Material::Lambert(Lambert::new(Vec3D::new(0.8, 0.3, 0.3)))
+        Material::Lambert(Lambert::new(Vec3D::new(0.1, 0.2, 0.5)))
     )));
 
     world.list.push(Box::new(Sphere::new(
@@ -50,7 +50,7 @@ fn main() {
         Material::Dielectric(Dielectric::new(1.5))
     )));
 
-    let camera = Camera::new();
+    let camera = Camera::new(120.0, nx as f64 / ny as f64);
 
     for j in (0..ny).rev() {
         for i in 0..nx {

@@ -20,10 +20,6 @@ impl HitRecord {
             material: Material::Lambert(Lambert::new(Vec3D::new(0.0, 0.0, 0.0)))
         }
     }
-
-    // pub fn material(&self) -> Material {
-    //     self.material
-    // }
 }
 
 pub trait Hitable {
