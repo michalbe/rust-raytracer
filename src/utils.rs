@@ -32,7 +32,6 @@ pub fn color(ray: Ray, world: &Hitable, depth: i32) -> Vec3D {
                 new_color.y * attenuation.y,
                 new_color.z * attenuation.z,
             );
-            // return new_color.cross(attenuation);
         } else {
             return Vec3D::new(0.0, 0.0, 0.0);
         }

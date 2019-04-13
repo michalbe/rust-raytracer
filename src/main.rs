@@ -46,7 +46,7 @@ fn main() {
         for b in -11..11 {
             let material = rand::random::<f64>();
             let center = Vec3D::new((a as f64) + 0.9 * rand::random::<f64>(), 0.2, (b as f64) + 0.9 * rand::random::<f64>());
-            if (center - Vec3D::new(4.0, 0.2, 0.0)).mag() > 0.9 {
+            if (center - Vec3D::new(4.0, 0.2, 0.0)).mag() > 0.51 {
                 if material < 0.8 {
                     world.list.push(Sphere::new(
                         center,
