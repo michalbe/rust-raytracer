@@ -16,8 +16,8 @@ use material::{ Material, Lambert, Metal };
 use utils::color;
 
 fn main() {
-    let nx = 400;
-    let ny = 200;
+    let nx = 600;
+    let ny = 300;
     let ns = 100;
 
     println!("P3\n{} {} 255", nx, ny);
@@ -41,13 +41,13 @@ fn main() {
     world.list.push(Box::new(Sphere::new(
         Vec3D::new(1.0, 0.0, -1.0),
         0.5,
-        Material::Metal(Metal::new(Vec3D::new(0.8, 0.6, 0.2)))
+        Material::Metal(Metal::new(Vec3D::new(0.8, 0.6, 0.2), 0.0001))
     )));
 
     world.list.push(Box::new(Sphere::new(
         Vec3D::new(-1.0, 0.0, -1.0),
         0.5,
-        Material::Metal(Metal::new(Vec3D::new(0.8, 0.8, 0.8)))
+        Material::Metal(Metal::new(Vec3D::new(0.8, 0.8, 0.8), 1.0))
     )));
 
     let camera = Camera::new();
