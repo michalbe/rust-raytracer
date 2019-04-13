@@ -50,7 +50,20 @@ fn main() {
         Material::Dielectric(Dielectric::new(1.5))
     )));
 
-    let camera = Camera::new(120.0, nx as f64 / ny as f64);
+    let look_from = Vec3D::new(3.0, 3.0, 2.0);
+    let look_at = Vec3D::new(0.0, 0.0, -1.0);
+    let distance_to_focus = (look_from - look_at).mag();
+    let aperture = 2.0;
+
+    let camera = Camera::new(
+        look_from,
+        look_at,
+        Vec3D::new(0.0, 1.0, 0.0),
+        20.0,
+        nx as f64 / ny as f64,
+        aperture,
+        distance_to_focus
+    );
 
     for j in (0..ny).rev() {
         for i in 0..nx {
