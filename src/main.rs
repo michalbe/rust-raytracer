@@ -15,45 +15,82 @@ use camera::Camera;
 use material::{ Material, Lambert, Metal, Dielectric };
 use utils::color;
 
+// fn scene(world: &mut HitableList) -> bool {
+
+
+//     true
+// }
+
 fn main() {
     let nx = 600;
     let ny = 300;
-    let ns = 100;
+    let ns = 200;
 
     println!("P3\n{} {} 255", nx, ny);
+
 
     let mut world = HitableList {
         list: vec![]
     };
 
     world.list.push(Box::new(Sphere::new(
-        Vec3D::new(0.0, 0.0, -1.0),
-        0.5,
-        Material::Lambert(Lambert::new(Vec3D::new(0.1, 0.2, 0.5)))
+        Vec3D::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Material::Lambert(Lambert::new(Vec3D::new(0.5, 0.5, 0.5)))
     )));
 
+    for a in -11..11 {
+        for b in -11..11 {
+            let material = rand::random::<f64>();
+            let center = Vec3D::new((a as f64) + 0.9 * rand::random::<f64>(), 0.2, (b as f64) + 0.9 * rand::random::<f64>());
+            if (center - Vec3D::new(4.0, 0.2, 0.0)).mag() > 0.9 {
+                if material < 0.8 {
+                    world.list.push(Box::new(Sphere::new(
+                        center,
+                        0.2,
+                        Material::Metal(Metal::new(Vec3D::new(
+                            0.5 * (1.0 + rand::random::<f64>()),
+                            0.5 * (1.0 + rand::random::<f64>()),
+                            0.5 * (1.0 + rand::random::<f64>())
+                        ), 0.5 * rand::random::<f64>()))
+                    )));
+                } else {
+                    world.list.push(Box::new(Sphere::new(
+                        center,
+                        0.2,
+                        Material::Lambert(Lambert::new(Vec3D::new(
+                            rand::random::<f64>() * rand::random::<f64>(),
+                            rand::random::<f64>() * rand::random::<f64>(),
+                            rand::random::<f64>() * rand::random::<f64>()
+                        )))
+                    )));
+                }
+            }
+        }
+    }
     world.list.push(Box::new(Sphere::new(
-        Vec3D::new(0.0, -100.5, -1.0),
-        100.0,
-        Material::Lambert(Lambert::new(Vec3D::new(0.8, 0.8, 0.0)))
-    )));
-
-    world.list.push(Box::new(Sphere::new(
-        Vec3D::new(1.0, 0.0, -1.0),
-        0.5,
-        Material::Metal(Metal::new(Vec3D::new(0.8, 0.6, 0.2), 0.0001))
-    )));
-
-    world.list.push(Box::new(Sphere::new(
-        Vec3D::new(-1.0, 0.0, -1.0),
-        0.5,
+        Vec3D::new(0.0, 1.0, 0.0),
+        1.0,
         Material::Dielectric(Dielectric::new(1.5))
     )));
 
-    let look_from = Vec3D::new(3.0, 3.0, 2.0);
-    let look_at = Vec3D::new(0.0, 0.0, -1.0);
-    let distance_to_focus = (look_from - look_at).mag();
-    let aperture = 2.0;
+    world.list.push(Box::new(Sphere::new(
+        Vec3D::new(-4.0, 1.0, 0.0),
+        1.0,
+        Material::Lambert(Lambert::new(Vec3D::new(0.4, 0.2, 0.1)))
+    )));
+
+    world.list.push(Box::new(Sphere::new(
+        Vec3D::new(4.0, 1.0, 0.0),
+        1.0,
+        Material::Metal(Metal::new(Vec3D::new(0.7, 0.6, 0.5), 0.0))
+    )));
+
+
+    let look_from = Vec3D::new(13.0, 2.0, 3.0);
+    let look_at = Vec3D::new(0.0, 0.0, 0.0);
+    let distance_to_focus = 10.0;
+    let aperture = 0.1;
 
     let camera = Camera::new(
         look_from,
